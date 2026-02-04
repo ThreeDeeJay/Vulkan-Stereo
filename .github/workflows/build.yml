@@ -8,7 +8,6 @@ env:
   Configuration: Release
   Artifacts: build/Release
   Title: Vulkan Stereoscopy
-  Executable: ${{github.event.repository.name}}.exe # *
 
 on:
   push:
