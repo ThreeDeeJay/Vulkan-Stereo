@@ -40,8 +40,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        vcpkg install --triplet x64-windows
-        vcpkg install sdl2
+        vcpkg install
 
     - name: Configure
       run: cmake -A "${{env.Platform}}" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.Configuration}}
