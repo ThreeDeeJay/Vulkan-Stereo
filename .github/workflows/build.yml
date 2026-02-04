@@ -33,15 +33,15 @@ jobs:
         echo "CommitDate=$(git show -s --date=format:'%Y-%m-%d' --format=%cd)" >> $env:GITHUB_ENV
 
 
-#    - name: Install vcpkg
-#      uses: lukka/run-vcpkg@v11.5
-#      with:
-#        vcpkgGitCommitId: c2aeddd80357b17592e59ad965d2adf65a19b22f
+    - name: Install vcpkg
+      uses: lukka/run-vcpkg@v11.5
+      with:
+        vcpkgGitCommitId: c2aeddd80357b17592e59ad965d2adf65a19b22f
 
-#    - name: Install dependencies
-#      run: |
+    - name: Install dependencies
+      run: |
 #        vcpkg install --classic sdl2[vulkan] glslang glm vulkan shaderc vulkan-sdk-components vulkan-validationlayers glfw3 glm --triplet x64-windows
-#        vcpkg install
+        vcpkg install
 
 #    - name: Cache Vulkan SDK
 #      id: cache-vulkan-sdk
@@ -60,7 +60,7 @@ jobs:
       run: ls -R
 
     - name: Configure
-      run: cmake -A "${{env.Platform}}" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.Configuration}}
+      run: cmake -A "${{env.Platform}}" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.Configuration}} -DCMAKE_PREFIX_PATH=C:\VulkanSDK\1.4.335.0;vcpkg\installed\x64-windows
 
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.Configuration}}
