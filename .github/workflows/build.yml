@@ -33,14 +33,14 @@ jobs:
         echo "CommitDate=$(git show -s --date=format:'%Y-%m-%d' --format=%cd)" >> $env:GITHUB_ENV
 
 
-    - name: Install vcpkg
-      uses: lukka/run-vcpkg@v11.5
-      with:
-        vcpkgGitCommitId: c2aeddd80357b17592e59ad965d2adf65a19b22f
+#    - name: Install vcpkg
+#      uses: lukka/run-vcpkg@v11.5
+#      with:
+#        vcpkgGitCommitId: c2aeddd80357b17592e59ad965d2adf65a19b22f
 
-    - name: Install dependencies
-      run: |
-        vcpkg install --classic sdl2[vulkan] glslang glm vulkan shaderc vulkan-sdk-components vulkan-validationlayers glfw3 glm --triplet x64-windows
+#    - name: Install dependencies
+#      run: |
+#        vcpkg install --classic sdl2[vulkan] glslang glm vulkan shaderc vulkan-sdk-components vulkan-validationlayers glfw3 glm --triplet x64-windows
 #        vcpkg install
 
 #    - name: Cache Vulkan SDK
