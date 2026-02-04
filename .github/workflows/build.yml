@@ -19,7 +19,7 @@ on:
 
 jobs:
   Windows:
-    runs-on: windows-2022
+    runs-on: windows-2025
     steps:
 
     - name: Clone repo and submodules
@@ -33,10 +33,10 @@ jobs:
         echo "CommitCount=$(git rev-list --count HEAD)" >> $env:GITHUB_ENV
         echo "CommitDate=$(git show -s --date=format:'%Y-%m-%d' --format=%cd)" >> $env:GITHUB_ENV
 
-    - name: Install vcpkg
-      uses: lukka/run-vcpkg@v11.5
-      with:
-        vcpkgGitCommitId: c2aeddd80357b17592e59ad965d2adf65a19b22f
+#    - name: Install vcpkg
+#      uses: lukka/run-vcpkg@v11.5
+#      with:
+#        vcpkgGitCommitId: c2aeddd80357b17592e59ad965d2adf65a19b22f
 
     - name: Install dependencies
       run: |
