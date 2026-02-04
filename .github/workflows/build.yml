@@ -44,13 +44,13 @@ jobs:
 
     - name: Cache Vulkan SDK
       id: cache-vulkan-sdk
-      uses: actions/cache@v1
+      uses: actions/cache@v5
       with:
-        path: "C:\\VulkanSDK\\1.4.341"
+        path: "C:\\VulkanSDK\\1.4.335"
         key: VulkanSDK
     - name: Setup Vulkan
       if: steps.cache-vulkan-sdk.outputs.cache-hit != 'true'
       run: |
-        Invoke-WebRequest -Uri "https://sdk.lunarg.com/sdk/download/1.4.341.0/windows/vulkansdk-windows-X64-1.4.341.0.exe" -OutFile VulkanSDK.exe
+        Invoke-WebRequest -Uri "https://sdk.lunarg.com/sdk/download/1.4.335.0/windows/vulkansdk-windows-X64-1.4.335.0.exe" -OutFile VulkanSDK.exe
         $installer = Start-Process -FilePath VulkanSDK.exe -Wait -PassThru -ArgumentList @("/S");
         $installer.WaitForExit();
