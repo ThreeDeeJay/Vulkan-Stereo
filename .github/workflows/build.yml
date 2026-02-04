@@ -34,7 +34,7 @@ jobs:
         echo "CommitDate=$(git show -s --date=format:'%Y-%m-%d' --format=%cd)" >> $env:GITHUB_ENV
 
     - name: Configure
-      run: cmake -A ${{env.Platform}} -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.Configuration}}
+      run: cmake -A "${{env.Platform}}" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.Configuration}}
 
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.Configuration}}
