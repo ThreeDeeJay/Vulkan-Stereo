@@ -32,18 +32,6 @@ jobs:
         echo "CommitCount=$(git rev-list --count HEAD)" >> $env:GITHUB_ENV
         echo "CommitDate=$(git show -s --date=format:'%Y-%m-%d' --format=%cd)" >> $env:GITHUB_ENV
 
-    - name: Cache Vulkan SDK
-      id: cache-vulkan-sdk
-      uses: actions/cache@v5
-      with:
-        path: "C:\\VulkanSDK\\1.4.335.0"
-        key: VulkanSDK
-    - name: Install Vulkan SDK
-      if: steps.cache-vulkan-sdk.outputs.cache-hit != 'true'
-      shell: powershell
-      run: |
-        Invoke-WebRequest -Method Get -Uri https://sdk.lunarg.com/sdk/download/1.4.335.0/windows/vulkansdk-windows-X64-1.4.335.0.exe -OutFile VulkanSDK.exe -UseBasicParsing
-        Start-Process -Wait ./VulkanSDK.exe -ArgumentList "--accept-licenses", " --default-answer", " --confirm-command install"
 
     - name: Install vcpkg
       uses: lukka/run-vcpkg@v11.5
@@ -54,6 +42,19 @@ jobs:
       run: |
         vcpkg install --classic sdl2[vulkan] glslang glm vulkan shaderc vulkan-sdk-components vulkan-validationlayers glfw3 glm --triplet x64-windows
 #        vcpkg install
+
+#    - name: Cache Vulkan SDK
+#      id: cache-vulkan-sdk
+#      uses: actions/cache@v5
+#      with:
+#        path: "C:\\VulkanSDK\\1.4.335.0"
+#        key: VulkanSDK
+    - name: Install Vulkan SDK
+#      if: steps.cache-vulkan-sdk.outputs.cache-hit != 'true'
+      shell: powershell
+      run: |
+        Invoke-WebRequest -Method Get -Uri https://sdk.lunarg.com/sdk/download/1.4.335.0/windows/vulkansdk-windows-X64-1.4.335.0.exe -OutFile VulkanSDK.exe -UseBasicParsing
+        Start-Process -Wait ./VulkanSDK.exe -ArgumentList "--accept-licenses", "--default-answer", "--confirm-command install", "com.lunarg.vulkan.sdl2", "com.lunarg.vulkan.glm", "com.lunarg.vulkan.volk", "com.lunarg.vulkan.vma", "com.lunarg.vulkan.debug", "com.lunarg.vulkan.arm64"
 
     - name: List files
       run: ls -R
