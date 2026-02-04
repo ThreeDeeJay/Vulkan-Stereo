@@ -41,6 +41,9 @@ jobs:
       run: |
         vcpkg install --classic sdl2[vulkan] glslang glm vulkan --triplet x64-windows
 
+    - name: List files
+      run: ls -R
+
     - name: Configure
       run: cmake -A "${{env.Platform}}" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.Configuration}}
 
