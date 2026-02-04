@@ -7,7 +7,7 @@ env:
   Platform: x64
   Configuration: Release
   Artifacts: build/Release
-  Title: ${{github.event.repository.name}}
+  Title: Vulkan Stereoscopy
   Executable: ${{github.event.repository.name}}.exe # *
 
 on:
