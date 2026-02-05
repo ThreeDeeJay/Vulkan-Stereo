@@ -40,8 +40,8 @@ jobs:
 
     - name: Install dependencies
       run: |
-#        vcpkg install --classic sdl2[vulkan] glslang glm vulkan shaderc vulkan-sdk-components vulkan-validationlayers glfw3 glm --triplet x64-windows
         vcpkg install
+#        vcpkg install --classic sdl2[vulkan] glslang glm vulkan shaderc vulkan-sdk-components vulkan-validationlayers glfw3 glm --triplet x64-windows
 
 #    - name: Cache Vulkan SDK
 #      id: cache-vulkan-sdk
