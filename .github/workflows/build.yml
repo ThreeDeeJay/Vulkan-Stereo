@@ -7,6 +7,7 @@ env:
   Platform: x64
   Configuration: Release
   Artifacts: build/Release
+  Executable: standalone-sdl-stereo.exe
   Title: Vulkan Stereoscopy
   VULKAN_VERSION: 1.4.335.0
 
@@ -33,6 +34,13 @@ jobs:
         echo "CommitCount=$(git rev-list --count HEAD)" >> $env:GITHUB_ENV
         echo "CommitDate=$(git show -s --date=format:'%Y-%m-%d' --format=%cd)" >> $env:GITHUB_ENV
 
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v4
+      with:
+        version: '6.8.3'
+        host: 'windows'
+        target: 'desktop'
+        arch: 'win64_msvc2022_64'
 
     - name: Install vcpkg
       uses: lukka/run-vcpkg@v11.5
@@ -66,6 +74,10 @@ jobs:
 #;vcpkg\installed\x64-windows
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.Configuration}}
+
+    - name: Qt Deploy
+      run: |
+        windeployqt.exe "${{github.workspace}}/${{env.Artifacts}}/${{github.event.repository.name}}.exe"
 
     - name: List files
       run: ls -R
