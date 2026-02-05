@@ -1,111 +1,98 @@
-#Template from: https://github.com/ThreeDeeJay/GitHub-Actions-build-templates/blob/main/Windows-CMake.yml
-name: Build
-
-env:
-  GH_TOKEN: ${{github.token}}
-  Branch: ${{github.ref_name}}
-  Platform: x64
-  Configuration: Release
-  Artifacts: build/Release
-  Executable: standalone-sdl-stereo.exe
-  Title: Vulkan Stereoscopy
-  VULKAN_VERSION: 1.4.335.0
-
-on:
-  push:
-    Branches: $Branch
-  pull_request:
-    Branches: $Branch
-  workflow_dispatch:
-
-jobs:
-  Windows:
-    runs-on: windows-2025
-    steps:
-
-    - name: Clone repo and submodules
-      run: git clone --recurse-submodules https://${{github.repository_owner}}:${{github.token}}@github.com/${{github.repository}}.git "${{github.workspace}}" --branch ${{env.Branch}}
-
-    - name: Get current date, commit hash and count
-      run: |
-        echo "FirstCommitHash=$(git rev-list --max-parents=0 HEAD --first-parent)" >> $env:GITHUB_ENV
-        echo "CommitHash=$(git rev-parse HEAD)" >> $env:GITHUB_ENV
-        echo "CommitHashShort=$(git rev-parse --short=7 HEAD)" >> $env:GITHUB_ENV
-        echo "CommitCount=$(git rev-list --count HEAD)" >> $env:GITHUB_ENV
-        echo "CommitDate=$(git show -s --date=format:'%Y-%m-%d' --format=%cd)" >> $env:GITHUB_ENV
-
-    - name: Install Qt
-      uses: jurplel/install-qt-action@v4
-      with:
-        version: '6.8.3'
-        host: 'windows'
-        target: 'desktop'
-        arch: 'win64_msvc2022_64'
-
-    - name: Install vcpkg
-      uses: lukka/run-vcpkg@v11.5
-      with:
-        vcpkgGitCommitId: c2aeddd80357b17592e59ad965d2adf65a19b22f
-
-    - name: Install dependencies
-      run: |
-        vcpkg install
-#        vcpkg install --classic sdl2[vulkan] glslang glm vulkan shaderc vulkan-sdk-components vulkan-validationlayers glfw3 glm --triplet x64-windows
-
-#    - name: Cache Vulkan SDK
-#      id: cache-vulkan-sdk
-#      uses: actions/cache@v5
-#      with:
-#        path: "C:\\VulkanSDK\\${{env.VULKAN_VERSION}}"
-#        key: VulkanSDK
-    - name: Install Vulkan SDK
-#      if: steps.cache-vulkan-sdk.outputs.cache-hit != 'true'
-      shell: powershell
-      run: |
-        echo "VULKAN_SDK=C:\VulkanSDK\${{env.VULKAN_VERSION}}" >> $env:GITHUB_ENV
-        Invoke-WebRequest -Method Get -Uri https://sdk.lunarg.com/sdk/download/${{env.VULKAN_VERSION}}/windows/vulkansdk-windows-X64-${{env.VULKAN_VERSION}}.exe -OutFile VulkanSDK.exe -UseBasicParsing
-        Start-Process -Wait ./VulkanSDK.exe -ArgumentList "--accept-licenses", "--default-answer", "--confirm-command install", "com.lunarg.vulkan.sdl2", "com.lunarg.vulkan.glm", "com.lunarg.vulkan.volk", "com.lunarg.vulkan.vma", "com.lunarg.vulkan.debug", "com.lunarg.vulkan.arm64"
-
-    - name: List files
-      run: ls -R
-
-    - name: Configure
-      run: cmake -A "${{env.Platform}}" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.Configuration}} -DCMAKE_PREFIX_PATH="vcpkg_installed\x64-windows\share;C:\VulkanSDK\${{env.VULKAN_VERSION}}"
-#;vcpkg\installed\x64-windows
-    - name: Build
-      run: cmake --build ${{github.workspace}}/build --config ${{env.Configuration}}
-
-    - name: Qt Deploy
-      run: |
-        windeployqt.exe "${{github.workspace}}/${{env.Artifacts}}/${{github.event.repository.name}}.exe"
-
-    - name: List files
-      run: ls -R
-
-    - name: Upload Installer Artifact to GitHub
-      uses: actions/upload-artifact@v4
-      with:
-        name: "${{env.Title}}_r${{env.CommitCount}}@${{env.CommitHashShort}}"
-        path: "${{github.workspace}}/${{env.Artifacts}}/"
-
-    - name: Compress artifacts
-      run: |
-        mkdir Release
-        7z a "Release/${{env.Title}}.zip" "${{github.workspace}}/${{env.Artifacts}}/" -mx=9
-        cp "Release/${{env.Title}}.zip" "Release/${{env.Title}}_r${{env.CommitCount}}@${{env.CommitHashShort}}.zip"
-
-    - name: Purge tag - latest-${{env.Branch}}
-      run: |
-        gh release delete latest-${{env.Branch}} --repo ${{github.repository}} --cleanup-tag --yes || true
-
-    - name: Release - archive
-      run: |
-        gh release create archive --repo ${{github.repository}} --target ${{env.FirstCommitHash}} --latest=false --prerelease --title "${{env.Title}} build archive" --notes "Latest build: https://github.com/${{github.repository}}/releases/latest
-        Build log: https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}" || true
-        gh release upload archive --repo ${{github.repository}} --clobber "Release/${{env.Title}}_r${{env.CommitCount}}@${{env.CommitHashShort}}.zip"
-
-    - name: Release - latest-${{env.Branch}}
-      run: |
-        gh release create latest-${{env.Branch}} --repo ${{github.repository}} --target ${{env.CommitHash}} --generate-notes --latest=true --title "${{env.Title}} r${{env.CommitCount}}@${{env.CommitHashShort}}" --notes "Build archive: https://github.com/${{github.repository}}/releases/tag/archive
-        Build log: https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}"
-        gh release upload latest-${{env.Branch}} --repo ${{github.repository}} --clobber "Release/${{env.Title}}.zip"
+  #Template from: https://github.com/ThreeDeeJay/GitHub-Actions-build-templates/blob/main/Windows-CMake.yml
+  name: Build
+  
+  env:
+    GH_TOKEN: ${{github.token}}
+    Branch: ${{github.ref_name}}
+    Platform: x64
+    Configuration: Release
+    Artifacts: build/Release
+    Executable: standalone-sdl-stereo.exe
+    Title: Vulkan Stereoscopy
+    VULKAN_VERSION: 1.4.335.0
+  
+  on:
+    push:
+      Branches: $Branch
+    pull_request:
+      Branches: $Branch
+    workflow_dispatch:
+  
+  jobs:
+    Windows:
+      runs-on: windows-2025
+      steps:
+  
+      - name: Clone repo and submodules
+        run: git clone --recurse-submodules https://${{github.repository_owner}}:${{github.token}}@github.com/${{github.repository}}.git "${{github.workspace}}" --branch ${{env.Branch}}
+  
+      - name: Get current date, commit hash and count
+        run: |
+          echo "FirstCommitHash=$(git rev-list --max-parents=0 HEAD --first-parent)" >> $env:GITHUB_ENV
+          echo "CommitHash=$(git rev-parse HEAD)" >> $env:GITHUB_ENV
+          echo "CommitHashShort=$(git rev-parse --short=7 HEAD)" >> $env:GITHUB_ENV
+          echo "CommitCount=$(git rev-list --count HEAD)" >> $env:GITHUB_ENV
+          echo "CommitDate=$(git show -s --date=format:'%Y-%m-%d' --format=%cd)" >> $env:GITHUB_ENV
+  
+      - name: Install vcpkg
+        uses: lukka/run-vcpkg@v11.5
+        with:
+          vcpkgGitCommitId: c2aeddd80357b17592e59ad965d2adf65a19b22f
+  
+      - name: Install dependencies
+        run: |
+          vcpkg install
+  
+  #    - name: Cache Vulkan SDK
+  #      id: cache-vulkan-sdk
+  #      uses: actions/cache@v5
+  #      with:
+  #        path: "C:\\VulkanSDK\\${{env.VULKAN_VERSION}}"
+  #        key: VulkanSDK
+      - name: Install Vulkan SDK
+  #      if: steps.cache-vulkan-sdk.outputs.cache-hit != 'true'
+        shell: powershell
+        run: |
+          echo "VULKAN_SDK=C:\VulkanSDK\${{env.VULKAN_VERSION}}" >> $env:GITHUB_ENV
+          Invoke-WebRequest -Method Get -Uri https://sdk.lunarg.com/sdk/download/${{env.VULKAN_VERSION}}/windows/vulkansdk-windows-X64-${{env.VULKAN_VERSION}}.exe -OutFile VulkanSDK.exe -UseBasicParsing
+          Start-Process -Wait ./VulkanSDK.exe -ArgumentList "--accept-licenses", "--default-answer", "--confirm-command install", "com.lunarg.vulkan.sdl2", "com.lunarg.vulkan.glm", "com.lunarg.vulkan.volk", "com.lunarg.vulkan.vma", "com.lunarg.vulkan.debug", "com.lunarg.vulkan.arm64"
+  
+      - name: Configure
+        run: cmake -A "${{env.Platform}}" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.Configuration}} -DCMAKE_PREFIX_PATH="vcpkg_installed\${{env.Platform}}-windows\share;C:\VulkanSDK\${{env.VULKAN_VERSION}}"
+  
+      - name: Build
+        run: cmake --build ${{github.workspace}}/build --config ${{env.Configuration}}
+  
+      - name: Deploy
+        run: copy "vcpkg_installed\${{env.Platform}}-windows\bin\*.dll" "${{env.Artifacts}}"
+  
+      - name: List files
+        run: ls -R
+  
+      - name: Upload Installer Artifact to GitHub
+        uses: actions/upload-artifact@v4
+        with:
+          name: "${{env.Title}}_r${{env.CommitCount}}@${{env.CommitHashShort}}"
+          path: "${{github.workspace}}/${{env.Artifacts}}/"
+  
+      - name: Compress artifacts
+        run: |
+          mkdir Release
+          7z a "Release/${{env.Title}}.zip" "${{github.workspace}}/${{env.Artifacts}}/" -mx=9
+          cp "Release/${{env.Title}}.zip" "Release/${{env.Title}}_r${{env.CommitCount}}@${{env.CommitHashShort}}.zip"
+  
+      - name: Purge tag - latest-${{env.Branch}}
+        run: |
+          gh release delete latest-${{env.Branch}} --repo ${{github.repository}} --cleanup-tag --yes || true
+  
+      - name: Release - archive
+        run: |
+          gh release create archive --repo ${{github.repository}} --target ${{env.FirstCommitHash}} --latest=false --prerelease --title "${{env.Title}} build archive" --notes "Latest build: https://github.com/${{github.repository}}/releases/latest
+          Build log: https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}" || true
+          gh release upload archive --repo ${{github.repository}} --clobber "Release/${{env.Title}}_r${{env.CommitCount}}@${{env.CommitHashShort}}.zip"
+  
+      - name: Release - latest-${{env.Branch}}
+        run: |
+          gh release create latest-${{env.Branch}} --repo ${{github.repository}} --target ${{env.CommitHash}} --generate-notes --latest=true --title "${{env.Title}} r${{env.CommitCount}}@${{env.CommitHashShort}}" --notes "Build archive: https://github.com/${{github.repository}}/releases/tag/archive
+          Build log: https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}"
+          gh release upload latest-${{env.Branch}} --repo ${{github.repository}} --clobber "Release/${{env.Title}}.zip"
