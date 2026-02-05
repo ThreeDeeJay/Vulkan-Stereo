@@ -70,6 +70,7 @@
         run: cmake --build ${{github.workspace}}/build --config ${{env.Configuration}}
   
       - name: Deploy
+        shell: cmd
         run: |
           If exist "vcpkg_installed\${{env.Platform}}-windows\bin\*.dll" (copy "vcpkg_installed\${{env.Platform}}-windows\bin\*.dll" "${{env.Artifacts}}")
           If exist "vcpkg\installed\${{env.Platform}}-windows\bin\*.dll" (copy "vcpkg\installed\${{env.Platform}}-windows\bin\*.dll" "${{env.Artifacts}}")
