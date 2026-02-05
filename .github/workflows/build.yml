@@ -41,7 +41,7 @@
   
       - name: Install dependencies
         run: |
-          vcpkg --classic install sdl2[vulkan]
+          vcpkg --classic install sdl2[vulkan] glslang glm vulkan
           
   #=2.0.12#0
   #    - name: Cache Vulkan SDK
@@ -64,7 +64,7 @@
         run: ls -R
 
       - name: Configure
-        run: cmake -A "${{env.Platform}}" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.Configuration}} -DCMAKE_PREFIX_PATH="vcpkg_installed\${{env.Platform}}-windows\share;vcpkg\installed\${{env.Platform}}-windows\share;C:\VulkanSDK\${{env.VULKAN_VERSION}}"
+        run: cmake -A "${{env.Platform}}" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.Configuration}} -DCMAKE_PREFIX_PATH="C:\VulkanSDK\${{env.VULKAN_VERSION}};vcpkg_installed\${{env.Platform}}-windows\share;vcpkg\installed\${{env.Platform}}-windows\share"
   
       - name: Build
         run: cmake --build ${{github.workspace}}/build --config ${{env.Configuration}}
