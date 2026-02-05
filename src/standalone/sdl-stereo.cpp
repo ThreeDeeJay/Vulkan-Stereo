@@ -641,8 +641,6 @@ private:
 
         if (vkCreateSwapchainKHR(device, &createInfo, nullptr, &swapChain) != VK_SUCCESS) {
             throw std::runtime_error("failed to create swap chain!");
-            throw std::runtime_error(vkCreateSwapchainKHR(device, &createInfo, nullptr, &swapChain));
-            throw std::runtime_error(device, &createInfo, nullptr, &swapChain);
         }
 
         vkGetSwapchainImagesKHR(device, swapChain, &imageCount, nullptr);
