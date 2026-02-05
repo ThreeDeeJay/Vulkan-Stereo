@@ -41,8 +41,8 @@
   
       - name: Install dependencies
         run: |
-          vcpkg --classic install sdl2[vulkan]=2.0.12#0
-  
+          vcpkg --classic install sdl2[vulkan]
+  #=2.0.12#0
   #    - name: Cache Vulkan SDK
   #      id: cache-vulkan-sdk
   #      uses: actions/cache@v5
