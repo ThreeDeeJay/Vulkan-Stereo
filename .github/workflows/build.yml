@@ -60,8 +60,8 @@ jobs:
       run: ls -R
 
     - name: Configure
-      run: cmake -A "${{env.Platform}}" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.Configuration}} -DCMAKE_PREFIX_PATH=vcpkg_installed\x64-windows\share;C:\VulkanSDK\1.4.335.0
-#;vcpkg\installed\x64-windows
+      run: cmake -A "${{env.Platform}}" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.Configuration}} -DCMAKE_PREFIX_PATH=vcpkg_installed\x64-windows\share
+#;vcpkg\installed\x64-windows;C:\VulkanSDK\1.4.335.0
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.Configuration}}
 
