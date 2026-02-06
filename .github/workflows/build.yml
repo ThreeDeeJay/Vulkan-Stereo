@@ -6,7 +6,7 @@
     Branch: ${{github.ref_name}}
     Platform: x64
     Configuration: Release
-    Artifacts: build/Release
+    Artifacts: build\Release
     Executable: standalone-sdl-stereo.exe
     Title: Vulkan Stereoscopy
     VULKAN_VERSION: 1.1.130.0
@@ -73,7 +73,7 @@
         shell: cmd
         run: |
           If exist "build\*.dll" (copy "build\*.dll" "${{env.Artifacts}}")
-          If exist "build\shaders\*.spv" (copy -R "build\shaders" "${{env.Artifacts}}\shaders")
+          If exist "build\shaders\*.spv" (xcopy "build\shaders\" "${{env.Artifacts}}\shaders")
        
       - name: List files
         run: ls -R
