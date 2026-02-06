@@ -55,7 +55,7 @@
         run: |
           echo "VULKAN_SDK=C:\VulkanSDK\${{env.VULKAN_VERSION}}" >> $env:GITHUB_ENV
           Invoke-WebRequest -Method Get -Uri https://web.archive.org/web/20221227095707if_/https://sdk.lunarg.com/sdk/download/${{env.VULKAN_VERSION}}/windows/VulkanSDK-${{env.VULKAN_VERSION}}-Installer.exe -OutFile VulkanSDK.exe -UseBasicParsing
-          Start-Process -Wait ./VulkanSDK.exe -ArgumentList "/S", "--accept-licenses", "--default-answer", "--confirm-command install", "com.lunarg.vulkan.sdl2", "com.lunarg.vulkan.glm"
+          Start-Process -Wait ./VulkanSDK.exe -ArgumentList "--accept-licenses", "--default-answer", "--confirm-command install"
 # 1.1  https://web.archive.org/web/20200413110014if_/https://sdk.lunarg.com/sdk/download/${{env.VULKAN_VERSION}}/windows/VulkanSDK-${{env.VULKAN_VERSION}}-Installer.exe
 
       - name: Configure
