@@ -72,9 +72,10 @@
       - name: Deploy
         shell: cmd
         run: |
-          If exist "build\*.dll" (copy "build\*.dll" "${{env.Artifacts}}")
+          If exist "vcpkg_installed\${{env.Platform}}-windows\bin\*.dll" (copy "vcpkg_installed\${{env.Platform}}-windows\bin\*.dll" "${{env.Artifacts}}")
+          If exist "vcpkg\installed\${{env.Platform}}-windows\bin\*.dll" (copy "vcpkg\installed\${{env.Platform}}-windows\bin\*.dll" "${{env.Artifacts}}")
           If exist "build\shaders\*.spv" (xcopy "build\shaders\" "${{env.Artifacts}}\shaders\")
-       
+
       - name: List files
         run: ls -R
   
