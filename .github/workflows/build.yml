@@ -44,6 +44,9 @@
         run: |
           vcpkg --classic install sdl2[vulkan] glslang glm vulkan
 
+      - name: List files
+        run: ls -R
+
 #      - name: Cache Vulkan SDK
 #        id: cache-vulkan-sdk
 #        uses: actions/cache@v5
@@ -61,9 +64,6 @@
 # 1.2 Start-Process -Wait ./VulkanSDK.exe -ArgumentList "--accept-licenses", "--default-answer", "--confirm-command install"
 # 1.1 https://web.archive.org/web/20200413110014if_/https://sdk.lunarg.com/sdk/download/${{env.VULKAN_VERSION}}/windows/VulkanSDK-${{env.VULKAN_VERSION}}-Installer.exe
 # 1.1 Start-Process -Wait ./VulkanSDK.exe -ArgumentList "/S"
-  
-      - name: List files
-        run: ls -R
 
       - name: Configure
         run: cmake -A "${{env.Platform}}" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.Configuration}} -DCMAKE_PREFIX_PATH="C:\VulkanSDK\${{env.VULKAN_VERSION}};vcpkg_installed\${{env.Platform}}-windows\share;vcpkg\installed\${{env.Platform}}-windows\share"
