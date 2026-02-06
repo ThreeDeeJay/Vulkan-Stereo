@@ -7,7 +7,6 @@
     Platform: x64
     Configuration: Release
     Artifacts: build\Release
-    Executable: standalone-sdl-stereo.exe
     Title: Vulkan Stereoscopy
     VULKAN_VERSION: 1.1.130.0
   
@@ -42,26 +41,20 @@
       - name: Install dependencies
         run: |
           vcpkg --classic install sdl2[vulkan] glslang glm vulkan
-          
-  #=2.0.12#0
-  #    - name: Cache Vulkan SDK
-  #      id: cache-vulkan-sdk
-  #      uses: actions/cache@v5
-  #      with:
-  #        path: "C:\\VulkanSDK\\${{env.VULKAN_VERSION}}"
-  #        key: VulkanSDK
+
+      - name: Cache Vulkan SDK
+        id: cache-vulkan-sdk
+        uses: actions/cache@v5
+        with:
+          path: "C:\\VulkanSDK\\${{env.VULKAN_VERSION}}"
+          key: VulkanSDK
       - name: Install Vulkan SDK
-  #      if: steps.cache-vulkan-sdk.outputs.cache-hit != 'true'
+        if: steps.cache-vulkan-sdk.outputs.cache-hit != 'true'
         shell: powershell
         run: |
           echo "VULKAN_SDK=C:\VulkanSDK\${{env.VULKAN_VERSION}}" >> $env:GITHUB_ENV
           Invoke-WebRequest -Method Get -Uri https://web.archive.org/web/20200413110014if_/https://sdk.lunarg.com/sdk/download/${{env.VULKAN_VERSION}}/windows/VulkanSDK-${{env.VULKAN_VERSION}}-Installer.exe -OutFile VulkanSDK.exe -UseBasicParsing
           Start-Process -Wait ./VulkanSDK.exe -ArgumentList "/S", "--accept-licenses", "--default-answer", "--confirm-command install", "com.lunarg.vulkan.sdl2", "com.lunarg.vulkan.glm"
-  #Invoke-WebRequest -Method Get -Uri https://sdk.lunarg.com/sdk/download/${{env.VULKAN_VERSION}}/windows/vulkansdk-windows-X64-${{env.VULKAN_VERSION}}.exe -OutFile VulkanSDK.exe -UseBasicParsing
-  #Start-Process -Wait ./VulkanSDK.exe -ArgumentList "/S", "--accept-licenses", "--default-answer", "--confirm-command install", "com.lunarg.vulkan.sdl2", "com.lunarg.vulkan.glm", "com.lunarg.vulkan.volk", "com.lunarg.vulkan.vma", "com.lunarg.vulkan.debug", "com.lunarg.vulkan.arm64"
-
-      - name: List files
-        run: ls -R
 
       - name: Configure
         run: cmake -A "${{env.Platform}}" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.Configuration}} -DCMAKE_PREFIX_PATH="C:\VulkanSDK\${{env.VULKAN_VERSION}};vcpkg_installed\${{env.Platform}}-windows\share;vcpkg\installed\${{env.Platform}}-windows\share"
@@ -75,9 +68,6 @@
           If exist "vcpkg_installed\${{env.Platform}}-windows\bin\*.dll" (copy "vcpkg_installed\${{env.Platform}}-windows\bin\*.dll" "${{env.Artifacts}}")
           If exist "vcpkg\installed\${{env.Platform}}-windows\bin\*.dll" (copy "vcpkg\installed\${{env.Platform}}-windows\bin\*.dll" "${{env.Artifacts}}")
           If exist "build\shaders\*.spv" (xcopy "build\shaders\" "${{env.Artifacts}}\shaders\")
-
-      - name: List files
-        run: ls -R
   
       - name: Upload Installer Artifact to GitHub
         uses: actions/upload-artifact@v4
