@@ -8,7 +8,8 @@
     Configuration: Release
     Artifacts: build\Release
     Title: Vulkan Stereoscopy
-    VULKAN_VERSION: 1.1.130.0
+#    VULKAN_VERSION: 1.1.130.0
+    VULKAN_VERSION: 1.2.198.1
   
   on:
     push:
@@ -53,8 +54,9 @@
         shell: powershell
         run: |
           echo "VULKAN_SDK=C:\VulkanSDK\${{env.VULKAN_VERSION}}" >> $env:GITHUB_ENV
-          Invoke-WebRequest -Method Get -Uri https://web.archive.org/web/20200413110014if_/https://sdk.lunarg.com/sdk/download/${{env.VULKAN_VERSION}}/windows/VulkanSDK-${{env.VULKAN_VERSION}}-Installer.exe -OutFile VulkanSDK.exe -UseBasicParsing
+          Invoke-WebRequest -Method Get -Uri https://web.archive.org/web/20221227095707if_/https://sdk.lunarg.com/sdk/download/${{env.VULKAN_VERSION}}/windows/VulkanSDK-${{env.VULKAN_VERSION}}-Installer.exe -OutFile VulkanSDK.exe -UseBasicParsing
           Start-Process -Wait ./VulkanSDK.exe -ArgumentList "/S", "--accept-licenses", "--default-answer", "--confirm-command install", "com.lunarg.vulkan.sdl2", "com.lunarg.vulkan.glm"
+# 1.1  https://web.archive.org/web/20200413110014if_/https://sdk.lunarg.com/sdk/download/${{env.VULKAN_VERSION}}/windows/VulkanSDK-${{env.VULKAN_VERSION}}-Installer.exe
 
       - name: Configure
         run: cmake -A "${{env.Platform}}" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.Configuration}} -DCMAKE_PREFIX_PATH="C:\VulkanSDK\${{env.VULKAN_VERSION}};vcpkg_installed\${{env.Platform}}-windows\share;vcpkg\installed\${{env.Platform}}-windows\share"
