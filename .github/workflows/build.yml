@@ -6,7 +6,7 @@
     Branch: ${{github.ref_name}}
     Platform: x64
     Configuration: Release
-    Artifacts: build
+    Artifacts: build/Release
     Executable: standalone-sdl-stereo.exe
     Title: Vulkan Stereoscopy
     VULKAN_VERSION: 1.1.130.0
@@ -72,9 +72,9 @@
       - name: Deploy
         shell: cmd
         run: |
-          If exist "vcpkg_installed\${{env.Platform}}-windows\bin\*.dll" (copy "vcpkg_installed\${{env.Platform}}-windows\bin\*.dll" "${{env.Artifacts}}")
-          If exist "vcpkg\installed\${{env.Platform}}-windows\bin\*.dll" (copy "vcpkg\installed\${{env.Platform}}-windows\bin\*.dll" "${{env.Artifacts}}")
-
+          If exist "build\*.dll" (copy "build\*.dll" "${{env.Artifacts}}")
+          If exist "build\shaders\*.spv" (copy -R "build\shaders" "${{env.Artifacts}}\shaders")
+       
       - name: List files
         run: ls -R
   
@@ -87,7 +87,7 @@
       - name: Compress artifacts
         run: |
           mkdir Release
-          7z a "Release/${{env.Title}}.zip" "${{github.workspace}}/${{env.Artifacts}}/" -mx=9
+          7z a "Release/${{env.Title}}.zip" "${{github.workspace}}/${{env.Artifacts}}/*" -mx=9
           cp "Release/${{env.Title}}.zip" "Release/${{env.Title}}_r${{env.CommitCount}}@${{env.CommitHashShort}}.zip"
   
       - name: Purge tag - latest-${{env.Branch}}
