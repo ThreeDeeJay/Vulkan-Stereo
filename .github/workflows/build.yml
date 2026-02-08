@@ -69,7 +69,7 @@
         run: ls -R "${{env.VULKAN_SDK}}"
 
       - name: Configure
-        run: cmake -A "${{env.Platform}}" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.Configuration}} -DCMAKE_PREFIX_PATH="C:\VulkanSDK\${{env.VULKAN_VERSION}};vcpkg_installed\${{env.Platform}}-windows\share;vcpkg\installed\${{env.Platform}}-windows\share"
+        run: cmake -A "${{env.Platform}}" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.Configuration}} -DCMAKE_PREFIX_PATH="C:\VulkanSDK\${{env.VULKAN_VERSION}};vcpkg_installed\${{env.Platform}}-windows\share;vcpkg\installed\${{env.Platform}}-windows\share" -DSPIRV-Tools-opt_DIR="${{env.VULKAN_SDK}}\Lib\cmake"
   
       - name: Build
         run: cmake --build ${{github.workspace}}/build --config ${{env.Configuration}}
