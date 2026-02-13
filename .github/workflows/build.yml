@@ -5,7 +5,7 @@
     GH_TOKEN: ${{github.token}}
     Branch: ${{github.ref_name}}
     Platform: x64
-    Configuration: Release
+    Configuration: Debug
     Artifacts: build\Release
     Title: Vulkan Stereoscopy
 #    VULKAN_VERSION: 1.1.130.0
