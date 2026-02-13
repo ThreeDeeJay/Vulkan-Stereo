@@ -6,7 +6,7 @@
     Branch: ${{github.ref_name}}
     Platform: x64
     Configuration: Debug
-    Artifacts: build\Release
+    Artifacts: build\Debug
     Title: Vulkan Stereoscopy
 #    VULKAN_VERSION: 1.1.130.0
 #    VULKAN_VERSION: 1.2.198.1
