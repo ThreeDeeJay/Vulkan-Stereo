@@ -1,5 +1,6 @@
 #define VK_USE_PLATFORM_WIN32_KHR
 #include <vulkan/vulkan.h>
+#include <vulkan/vk_enum_string_helper.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_vulkan.h>
 #include <iostream>
@@ -15,6 +16,8 @@
 #include "glm/glm.hpp"
 #include <array>
 #include <format>
+
+#include "util.h"
 
 #undef max // Causes issues on std::numeric_limits
 
@@ -97,6 +100,8 @@ const bool enableValidationLayers = false;
 const bool enableValidationLayers = true;
 #endif
 
+bool validationLayersSupported = false;
+
 VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger) {
     auto func = (PFN_vkCreateDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
     if (func != nullptr) {
@@ -165,8 +170,15 @@ private:
 //    }
 
     void createInstance() {
-        if (enableValidationLayers && !checkValidationLayerSupport()) {
-            throw std::runtime_error("validation layers requested, but not available!");
+        if (enableValidationLayers) {
+            if (!checkValidationLayerSupport()) {
+                std::cerr << ("validation layers requested, but not available! proceeding without them.") << std::endl;
+                validationLayersSupported = false;
+            } else {
+                validationLayersSupported = true;
+            }
+        } else {
+            validationLayersSupported = false;
         }
 
         VkApplicationInfo appInfo{};
@@ -191,7 +203,7 @@ private:
         createInfo.ppEnabledExtensionNames = extensions.data();
 
         VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
-        if (enableValidationLayers) {
+        if (validationLayersSupported) {
             createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
             createInfo.ppEnabledLayerNames = validationLayers.data();
 
@@ -269,7 +281,7 @@ private:
     }
 
     void setupDebugMessenger() {
-        if (!enableValidationLayers) return;
+        if (!validationLayersSupported) return;
 
         VkDebugUtilsMessengerCreateInfoEXT createInfo;
         populateDebugMessengerCreateInfo(createInfo);
@@ -334,7 +346,7 @@ private:
 
         vkDestroyDevice(device, nullptr);
 
-        if (enableValidationLayers) {
+        if (validationLayersSupported) {
             DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
         }
 
@@ -353,7 +365,7 @@ private:
         std::vector<const char*> extensions(sdlExtensionCount);
         SDL_Vulkan_GetInstanceExtensions(window, &sdlExtensionCount, extensions.data());
 
-        if (enableValidationLayers) {
+        if (validationLayersSupported) {
             extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
         }
 
@@ -490,7 +502,7 @@ private:
         createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
         createInfo.ppEnabledExtensionNames = deviceExtensions.data();
 
-        if (enableValidationLayers) {
+        if (validationLayersSupported) {
             createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
             createInfo.ppEnabledLayerNames = validationLayers.data();
         } else {
