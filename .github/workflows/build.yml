@@ -42,7 +42,7 @@
   
       - name: Install dependencies
         run: |
-          vcpkg --classic install sdl2[vulkan] glslang glm vulkan spirv-tools vulkan-utility-libraries
+          vcpkg --classic install sdl2[vulkan] glslang glm vulkan spirv-tools vulkan-utility-libraries vulkan-headers
 
       - name: List files
         run: ls -R
